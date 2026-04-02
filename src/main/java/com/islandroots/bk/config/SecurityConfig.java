@@ -45,6 +45,7 @@ public class SecurityConfig {
                         "/webjars/**",
                         "/swagger-ui.html"
                 ).permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
