@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
+import com.islandroots.bk.modules.catalog.entity.Catalog;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "products")
@@ -32,4 +34,27 @@ public class Product {
     @Column(name = "image_url")
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "product_preparations", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "preparation", columnDefinition = "TEXT")
+    @Builder.Default
+    private List<String> preparations = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "product_ingredients", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "ingredient", columnDefinition = "TEXT")
+    @Builder.Default
+    private List<String> ingredients = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "product_vertus", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "vertu", columnDefinition = "TEXT")
+    @Builder.Default
+    private List<String> vertus = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "products")
+    @JsonIgnoreProperties("products")
+    @Builder.Default
+    private List<Catalog> catalogs = new ArrayList<>();
 }
