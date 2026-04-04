@@ -3,14 +3,14 @@ spring:
     name: island-roots-bk
   
   datasource:
-    url: jdbc:postgresql://localhost:5433/islandroots
-    username: myuser
-    password: mypassword
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/islandroots}
+    username: ${SPRING_DATASOURCE_USERNAME:myuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:mypassword}
     driver-class-name: org.postgresql.Driver
     
   jpa:
     hibernate:
-      ddl-auto: update # Utilise "update" pour la gération automatique des tables en dev
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     show-sql: true
     properties:
       hibernate:
