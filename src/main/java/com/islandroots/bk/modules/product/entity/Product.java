@@ -53,6 +53,12 @@ public class Product {
     @Builder.Default
     private List<String> vertus = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "product_weights", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "weight")
+    @Builder.Default
+    private List<String> weights = new ArrayList<>();
+
     @ManyToMany(mappedBy = "products")
     @JsonIgnoreProperties("products")
     @Builder.Default
