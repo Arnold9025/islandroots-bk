@@ -1,14 +1,12 @@
 package com.islandroots.bk.modules.product.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 import java.util.UUID;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import com.islandroots.bk.modules.catalog.entity.Catalog;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -57,10 +55,12 @@ public class Product {
     @CollectionTable(name = "product_poids", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "poids")
     @Builder.Default
-    private List<String> poids = new ArrayList<>(List.of("2g", "50g"));
+    private List<String> poids = new ArrayList<>(Arrays.asList("2g", "50g"));
 
     @ManyToMany(mappedBy = "products")
     @JsonIgnoreProperties("products")
     @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Catalog> catalogs = new ArrayList<>();
 }

@@ -3,11 +3,7 @@ package com.islandroots.bk.modules.catalog.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.islandroots.bk.modules.product.entity.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,5 +31,7 @@ public class Catalog {
     )
     @JsonIgnoreProperties("catalogs") // Prevent infinite recursion during JSON serialization
     @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Product> products = new ArrayList<>();
 }
