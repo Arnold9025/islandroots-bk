@@ -27,7 +27,7 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         // Check if user exists
-        if (repository.findByEmail(request.getEmail()).isPresent()) {
+        if (repository.findByEmailIgnoreCase(request.getEmail()).isPresent()) {
             throw new RuntimeException("Cet e-mail est déjà utilisé");
         }
 
@@ -52,7 +52,7 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = repository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
                 
         var jwtToken = jwtService.generateToken(user);

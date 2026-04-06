@@ -64,7 +64,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to authenticate via JWT: {}", e.getMessage());
+            log.error("ERREUR CRITIQUE AUTHENTIFICATION JWT: {} - Request UR: {} {}", 
+                e.getMessage(), request.getMethod(), request.getRequestURI());
         }
         
         filterChain.doFilter(request, response);

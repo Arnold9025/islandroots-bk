@@ -2,6 +2,7 @@ package com.islandroots.bk.config;
 
 import com.islandroots.bk.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,14 +16,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class ApplicationConfig {
 
     private final UserRepository repository;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+        return username -> {
+            log.debug("Tentative de récupération de l'utilisateur : {}", username);
+            return repository.findByEmailIgnoreCase(username)
+                    .map(user -> {
+                        log.debug("Utilisateur trouvé : {}", username);
+                        return user;
+                    })
+                    .orElseThrow(() -> {
+                        log.warn("Utilisateur [{}] non trouvé dans la base de données", username);
+                        return new UsernameNotFoundException("Utilisateur non trouvé : " + username);
+                    });
+        };
     }
 
     @Bean
