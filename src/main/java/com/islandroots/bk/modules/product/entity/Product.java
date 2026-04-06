@@ -23,13 +23,14 @@ public class Product {
     private UUID id;
 
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private BigDecimal price;
     private int stock;
     
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 1024)
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();
 

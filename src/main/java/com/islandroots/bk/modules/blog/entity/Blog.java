@@ -26,6 +26,7 @@ public class Blog {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(length = 1024)
     private String imageUrl;
 
     private String author;
