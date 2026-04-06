@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -31,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         
-        // Skip auth filter for swagger endpoints and public routes
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
@@ -57,10 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    log.debug("User {} authenticated via JWT", userEmail);
+                } else {
+                    log.warn("Invalid JWT token for user {}", userEmail);
                 }
             }
         } catch (Exception e) {
-            // Ignore token parse errors here, let Spring Security deny access
+            log.error("Failed to authenticate via JWT: {}", e.getMessage());
         }
         
         filterChain.doFilter(request, response);

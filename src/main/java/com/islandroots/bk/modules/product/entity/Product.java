@@ -54,10 +54,10 @@ public class Product {
     private List<String> vertus = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "product_weights", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "weight")
+    @CollectionTable(name = "product_poids", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "poids")
     @Builder.Default
-    private List<String> weights = new ArrayList<>();
+    private List<String> poids = new ArrayList<>(List.of("2g", "50g"));
 
     @ManyToMany(mappedBy = "products")
     @JsonIgnoreProperties("products")
