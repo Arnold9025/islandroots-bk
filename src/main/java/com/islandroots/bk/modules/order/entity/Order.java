@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.util.UUID;
 import java.util.List;
+import java.util.ArrayList;
 import java.math.BigDecimal;
 
 @Entity
@@ -28,7 +29,13 @@ public class Order {
     
     private BigDecimal total;
     
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id")
-    private List<OrderItem> items;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<OrderItem> items = new ArrayList<>();
+    
+    // Helper method to maintain bidirectional relationship
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
 }

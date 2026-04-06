@@ -20,6 +20,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order save(Order entity) {
+        if (entity.getItems() != null) {
+            entity.getItems().forEach(item -> item.setOrder(entity));
+        }
         return repository.save(entity);
     }
 
