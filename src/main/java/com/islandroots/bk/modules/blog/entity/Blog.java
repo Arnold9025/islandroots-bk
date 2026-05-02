@@ -33,4 +33,9 @@ public class Blog {
 
     @Builder.Default
     private LocalDateTime publishedAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private BlogStatus status = BlogStatus.PUBLISHED;
 }
+

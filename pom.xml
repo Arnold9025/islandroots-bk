@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.islandroots</groupId>
-	<artifactId>hk</artifactId>
+	<artifactId>island-roots-bk</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>island-roots-bk</name>
 	<description>Island Roots Backend</description>
