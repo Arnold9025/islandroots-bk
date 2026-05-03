@@ -55,7 +55,7 @@ public class SecurityConfig {
                         "/webjars/**",
                         "/swagger-ui.html"
                 ).permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products", "/api/products/**", "/api/catalogs", "/api/catalogs/**", "/api/blogs", "/api/blogs/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products", "/api/products/**", "/api/catalogs", "/api/catalogs/**", "/api/blogs", "/api/blogs/**", "/api/orders", "/api/orders/**").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/orders").permitAll()
                 .anyRequest().authenticated()
             )
