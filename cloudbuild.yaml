@@ -28,7 +28,7 @@ steps:
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk:latest'
       - '--region'
       - 'europe-west1'
-      - '--set-env-vars'
+      - '--update-env-vars'
       - 'SHIPPO_API_KEY=${_SHIPPO_API_KEY}'
 
 options:
