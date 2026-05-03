@@ -56,7 +56,7 @@ public class SecurityConfig {
                         "/swagger-ui.html"
                 ).permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products", "/api/products/**", "/api/catalogs", "/api/catalogs/**", "/api/blogs", "/api/blogs/**", "/api/orders", "/api/orders/**").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/orders").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/orders", "/api/shipments/rates").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

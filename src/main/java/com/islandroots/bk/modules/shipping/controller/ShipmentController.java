@@ -10,20 +10,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import com.islandroots.bk.modules.shipping.dto.LabelResponseDto;
+import com.islandroots.bk.modules.shipping.dto.ShippingRateDto;
+import com.islandroots.bk.modules.shipping.dto.ShippingRequestDto;
+import com.islandroots.bk.modules.shipping.service.ShippingIntegrationService;
+
 @RestController
 @RequestMapping("/api/shipments")
 @RequiredArgsConstructor
 public class ShipmentController {
 
     private final ShipmentService service;
+    private final ShippingIntegrationService integrationService;
 
-    @PostMapping
-    public ResponseEntity<Shipment> create(@RequestBody Shipment shipment) {
-        Shipment saved = service.save(shipment);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    @PostMapping("/rates")
+    public ResponseEntity<List<ShippingRateDto>> getRates(@RequestBody ShippingRequestDto request) {
+        return ResponseEntity.ok(integrationService.getRates(request));
     }
 
-    @GetMapping("/{id}")
+    @PostMapping("/{orderId}/label")
+    public ResponseEntity<LabelResponseDto> generateLabel(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(integrationService.generateLabel(orderId));
+    }
+
+    @PostMapping
+    public ResponseEntity<com.islandroots.bk.modules.shipping.entity.Shipment> create(@RequestBody com.islandroots.bk.modules.shipping.entity.Shipment shipment) {
+        com.islandroots.bk.modules.shipping.entity.Shipment saved = service.save(shipment);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
     public ResponseEntity<Shipment> getById(@PathVariable UUID id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)

@@ -31,3 +31,6 @@ springdoc:
 stripe:
   api-key: ${STRIPE_API_KEY:sk_test_placeholder}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_placeholder}
+
+shippo:
+  api-key: ${SHIPPO_API_KEY:mock_shippo_key}
