@@ -96,7 +96,14 @@ public class PaymentController {
                     });
                 }
                 
-                return ResponseEntity.ok(service.save(payment));
+                Payment savedPayment = service.save(payment);
+                
+                // Add customer email from Stripe session if available
+                if (session.getCustomerDetails() != null && session.getCustomerDetails().getEmail() != null) {
+                    savedPayment.setCustomerEmail(session.getCustomerDetails().getEmail());
+                }
+                
+                return ResponseEntity.ok(savedPayment);
             }
             return ResponseEntity.notFound().build();
         } catch (StripeException e) {
@@ -110,21 +117,25 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        return userRepository.findByEmailIgnoreCase(principal.getName()).map(user -> {
-            Payment payment = service.findAll().stream()
-                    .filter(p -> sessionId.equals(p.getStripeSessionId()))
-                    .findFirst()
-                    .orElse(null);
+        var userOpt = userRepository.findByEmailIgnoreCase(principal.getName());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        var user = userOpt.get();
+        Payment payment = service.findAll().stream()
+                .filter(p -> sessionId.equals(p.getStripeSessionId()))
+                .findFirst()
+                .orElse(null);
 
-            if (payment != null) {
-                orderService.findById(payment.getOrderId()).ifPresent(order -> {
-                    order.setUserId(user.getId());
-                    orderService.save(order);
-                });
-                return ResponseEntity.ok(payment);
-            }
-            return ResponseEntity.notFound().build();
-        }).orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        if (payment != null) {
+            orderService.findById(payment.getOrderId()).ifPresent(order -> {
+                order.setUserId(user.getId());
+                orderService.save(order);
+            });
+            return ResponseEntity.ok(payment);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping

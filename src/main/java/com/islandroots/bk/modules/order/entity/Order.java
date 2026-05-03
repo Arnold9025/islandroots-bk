@@ -29,6 +29,13 @@ public class Order {
     
     private BigDecimal total;
     
+    private String customerName;
+    private String customerEmail;
+    private String shippingAddress;
+    private String city;
+    private String zipCode;
+    private String country;
+    
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();

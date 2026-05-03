@@ -25,4 +25,7 @@ public class Payment {
     private String stripePaymentId; // Added to store the actual Payment Intent ID
     private String status;
     private BigDecimal amount;
+    
+    @Transient
+    private String customerEmail;
 }
