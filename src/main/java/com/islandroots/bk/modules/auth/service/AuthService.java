@@ -58,6 +58,7 @@ public class AuthService {
         var user = repository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
                 
+        var jwtToken = jwtService.generateToken(user);
         var refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
         return AuthResponse.builder()
                 .token(jwtToken)
