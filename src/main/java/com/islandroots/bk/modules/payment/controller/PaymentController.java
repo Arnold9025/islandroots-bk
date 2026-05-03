@@ -5,8 +5,12 @@ import com.islandroots.bk.modules.order.entity.Order;
 import com.islandroots.bk.modules.order.entity.OrderStatus;
 import com.islandroots.bk.modules.payment.entity.Payment;
 import com.islandroots.bk.modules.payment.service.PaymentService;
+import com.islandroots.bk.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +35,7 @@ public class PaymentController {
     private final PaymentService service;
     private final StripeService stripeService;
     private final OrderService orderService;
+    private final UserRepository userRepository;
 
     @PostMapping("/checkout-session")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody CheckoutRequest req) {
@@ -97,6 +102,29 @@ public class PaymentController {
         } catch (StripeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PostMapping("/link-user/{sessionId}")
+    public ResponseEntity<Payment> linkUser(@PathVariable String sessionId, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        return userRepository.findByEmailIgnoreCase(principal.getName()).map(user -> {
+            Payment payment = service.findAll().stream()
+                    .filter(p -> sessionId.equals(p.getStripeSessionId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (payment != null) {
+                orderService.findById(payment.getOrderId()).ifPresent(order -> {
+                    order.setUserId(user.getId());
+                    orderService.save(order);
+                });
+                return ResponseEntity.ok(payment);
+            }
+            return ResponseEntity.notFound().build();
+        }).orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     @PostMapping
