@@ -1,8 +1,23 @@
 steps:
+  # 1. Créer le registre d'images s'il n'existe pas (ignore l'erreur s'il existe déjà)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        gcloud artifacts repositories create cloud-run-source-deploy \
+          --repository-format=docker \
+          --location=europe-west1 || true
+
+  # 2. Construire l'image Docker
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk', '.']
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk:latest', '.']
+
+  # 3. Pousser l'image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk']
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk:latest']
+
+  # 4. Déployer sur Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -10,12 +25,9 @@ steps:
       - 'deploy'
       - 'islandroots-bk'
       - '--image'
-      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk:latest'
       - '--region'
       - 'europe-west1'
-
-images:
-  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/islandroots-bk'
 
 options:
   logging: CLOUD_LOGGING_ONLY
