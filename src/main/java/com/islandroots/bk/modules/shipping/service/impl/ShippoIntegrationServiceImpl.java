@@ -104,7 +104,10 @@ public class ShippoIntegrationServiceImpl implements ShippingIntegrationService 
             }
         } catch (Exception e) {
             log.error("Shippo API error: {}", e.getMessage());
-            // Fallback to mock rates if Shippo fails
+        }
+        
+        // Fallback to mock rates if Shippo fails or returns empty rates
+        if (rates.isEmpty()) {
             boolean isJamaica = "JM".equalsIgnoreCase(request.getCountry()) || "Jamaica".equalsIgnoreCase(request.getCountry());
             if (isJamaica) {
                 rates.add(ShippingRateDto.builder().provider("Jamaica Post").serviceLevel("Local Delivery").amount(5.00).currency("USD").estimatedDays("1-2 days").rateId("mock").build());
