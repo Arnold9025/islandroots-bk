@@ -1,13 +1,5 @@
 steps:
-  # 1. Créer le registre d'images s'il n'existe pas (ignore l'erreur s'il existe déjà)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        gcloud artifacts repositories create cloud-run-source-deploy \
-          --repository-format=docker \
-          --location=europe-west1 || true
+  # 1. Construire l'image Docker
 
   # 2. Construire l'image Docker
   - name: 'gcr.io/cloud-builders/docker'
