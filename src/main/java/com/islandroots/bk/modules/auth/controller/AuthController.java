@@ -3,6 +3,7 @@ package com.islandroots.bk.modules.auth.controller;
 import com.islandroots.bk.modules.auth.dto.AuthResponse;
 import com.islandroots.bk.modules.auth.dto.LoginRequest;
 import com.islandroots.bk.modules.auth.dto.RegisterRequest;
+import com.islandroots.bk.modules.auth.dto.TokenRefreshRequest;
 import com.islandroots.bk.modules.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(service.login(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        return ResponseEntity.ok(service.refreshToken(request.getRefreshToken()));
     }
 }

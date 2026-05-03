@@ -23,6 +23,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -40,8 +41,10 @@ public class AuthService {
                 
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
         return AuthResponse.builder()
                 .token(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .build();
     }
 
@@ -55,9 +58,26 @@ public class AuthService {
         var user = repository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
                 
-        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
         return AuthResponse.builder()
                 .token(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .build();
+    }
+
+    public AuthResponse refreshToken(String requestRefreshToken) {
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(token -> {
+                    var user = token.getUser();
+                    var jwtToken = jwtService.generateToken(user);
+                    // On peut choisir de faire tourner le refresh token aussi
+                    var newRefreshToken = refreshTokenService.createRefreshToken(user.getEmail());
+                    return AuthResponse.builder()
+                            .token(jwtToken)
+                            .refreshToken(newRefreshToken.getToken())
+                            .build();
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
     }
 }
